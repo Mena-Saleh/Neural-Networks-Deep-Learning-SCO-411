@@ -4,6 +4,7 @@ import pandas as pd
 import Preprocess as pp
 import Algorithms as ag
 
+
 # Should make our own
 from sklearn.metrics import confusion_matrix, accuracy_score
 
@@ -20,21 +21,24 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 X, y = pp.preprocess()
 
 # Filter features and classes
-features = ['MajorAxisLength', 'Roundness']
-classes = ['SIRA', 'CALI']
+features = ['Area', 'Perimeter']
+classes = ['CALI', 'BOMBAY']
 X,y = pp.filter_data(X,y, features, classes)
 
+# Train/Test split
+X_train, X_test, y_train, y_test = pp.train_test_split(X,y)
+
 # Train model
-w, b = ag.single_layer_perceptron(X, y, isAdaline=True)
+w, b = ag.single_layer_perceptron(X_train, y_train, isAdaline=True, use_bias = True)
 
 # Make predictions
-y_pred = ag.predict(X,w,b)
+y_pred = ag.predict(X_test,w,b)
 
 # Evaluate model (use from scratch code later rather than the built in one here)
 
-cm = confusion_matrix(y, y_pred)
+cm = confusion_matrix(y_test, y_pred)
 print(cm)
 
-accuracy = accuracy_score(y, y_pred)
+accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 

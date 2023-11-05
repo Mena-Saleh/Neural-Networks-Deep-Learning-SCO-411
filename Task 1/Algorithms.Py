@@ -22,13 +22,16 @@ def compute_MSE(X,y,w,b):
     return MSE
 
 # Model training function
-def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, epochs= 100, isAdaline = False):
+def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, epochs= 100, isAdaline = False, use_bias = True):
   
     # Initialization
 
     n_samples, n_features = X.shape
     w = np.random.rand(n_features)
-    b = np.random.rand()
+    if use_bias:
+        b = np.random.rand()
+    else:
+        b = 0
 
     # Training the model
     for j in range(epochs):
@@ -44,10 +47,11 @@ def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, ep
             if y[i] != y_pred:
                 loss = y[i] - y_pred
                 w += learning_rate * loss * X[i]
-                b += learning_rate * loss
+                if use_bias:
+                    b += learning_rate * loss
             
             MSE = compute_MSE(X,y,w,b)
-            print('Epoch', j + 1, 'Sample:', i+ 1, 'and the MSE is:', MSE)
+            print('Epoch', j + 1, 'Sample:', i + 1, 'and the MSE is:', MSE)
 
         # compute MSE
         MSE = compute_MSE(X,y,w,b)
@@ -57,7 +61,7 @@ def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, ep
             break
     
     print('Final parameters: ')
-    print('Weight:', w)
+    print('Weights:', w)
     print('Bias:', b)
     return w,b
 
