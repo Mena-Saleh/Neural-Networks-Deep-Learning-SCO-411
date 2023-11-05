@@ -3,15 +3,8 @@ import numpy as np
 import pandas as pd
 import Preprocess as pp
 import Algorithms as ag
-
-
-# Should make our own
-from sklearn.metrics import confusion_matrix, accuracy_score
-
-
-# GUI should be Implemented somewhere here in this file :)
-
-
+import Metrics as mt
+import tkinter as tk
 
 
 
@@ -21,7 +14,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 X, y = pp.preprocess()
 
 # Filter features and classes
-features = ['Area', 'Perimeter']
+features = ['Roundness', 'Perimeter']
 classes = ['CALI', 'BOMBAY']
 X,y = pp.filter_data(X,y, features, classes)
 
@@ -34,11 +27,10 @@ w, b = ag.single_layer_perceptron(X_train, y_train, isAdaline=True, use_bias = T
 # Make predictions
 y_pred = ag.predict(X_test,w,b)
 
-# Evaluate model (use from scratch code later rather than the built in one here)
+# Evaluate model 
 
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
+# Confusion matrix and other metrics
+mt.compute_confusion_matrix(y_test, y_pred)
 
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy * 100:.2f}%")
-
+# Model visualization
+mt.visualize_model_boundary(X_test,y_test, w, b, features, classes)

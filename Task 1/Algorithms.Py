@@ -14,7 +14,7 @@ def signum(x):
 def predict(X,w,b):
     y_pred_continuous = np.dot(X, w) + b
     y_pred = [signum(x) for x in y_pred_continuous]
-    return y_pred
+    return np.array(y_pred)
 
 def compute_MSE(X,y,w,b):
     y_pred = predict(X,w,b)
