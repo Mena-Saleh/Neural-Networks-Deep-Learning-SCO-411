@@ -21,7 +21,7 @@ def compute_MSE(X,y,w,b):
     MSE = np.mean((y - y_pred)**2)
     return MSE
 
-# Model training function
+# Model training function (using stochastic gradient descent)
 def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, epochs= 100, isAdaline = False, use_bias = True):
   
     # Initialization
@@ -59,7 +59,11 @@ def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, ep
         if(MSE <= MSE_threshold):
             print('\nThreshold reached, terminating the training process. \n')
             break
-    
+    print(f"Algorithm: {'Adaline' if isAdaline else 'Perceptron'}")
+    print(f"Learning rate: {learning_rate}")
+    print(f"Max epochs: {epochs}")
+    print(f"MSE threshold: {MSE_threshold}")
+    print(f"Bias: {'Yes' if use_bias else 'NO'}")
     print('Final parameters: ')
     print('Weights:', w)
     print('Bias:', b)
