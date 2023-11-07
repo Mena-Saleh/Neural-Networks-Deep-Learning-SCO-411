@@ -49,9 +49,10 @@ def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, ep
                 w += learning_rate * loss * X[i]
                 if use_bias:
                     b += learning_rate * loss
-            
-            MSE = compute_MSE(X,y,w,b)
-            print('Epoch', j + 1, 'Sample:', i + 1, 'and the MSE is:', MSE)
+            # Print MSE after every 5th sample to see how the stochastic updates are changing the MSE on the whole dataset.
+            if((i+1) % 5 == 0):
+                MSE = compute_MSE(X,y,w,b)
+                print('Epoch', j + 1, 'Sample:', i + 1, 'and the MSE is:', MSE)
 
         # compute MSE
         MSE = compute_MSE(X,y,w,b)
