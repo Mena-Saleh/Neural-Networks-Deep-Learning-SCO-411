@@ -59,6 +59,7 @@ def single_layer_perceptron(X,y, MSE_threshold = 0.02 , learning_rate = 0.01, ep
         if(MSE <= MSE_threshold):
             print('\nThreshold reached, terminating the training process. \n')
             break
+        
     print(f"Algorithm: {'Adaline' if isAdaline else 'Perceptron'}")
     print(f"Learning rate: {learning_rate}")
     print(f"Max epochs: {epochs}")

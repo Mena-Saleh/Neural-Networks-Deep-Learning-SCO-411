@@ -33,7 +33,6 @@ def compute_confusion_matrix(y, y_pred):
 
     # Printing the matrix
     print(f'TP:{tp}     FP:{fp}\nFN:{fn}     TN:{tn}')
-    #messagebox.showinfo('CM', f'TP:{tp}     FP:{fp}\nFN:{fn}     TN:{tn}')
 
     # Other metrics
     accuracy = (tp + tn)/(tp + tn + fp + fn)

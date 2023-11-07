@@ -193,8 +193,6 @@ run_btn.config(command = lambda: run(metrics_label, [feature1_var.get(), feature
                              is_adaline_var.get(),use_bias_var.get()),
                              )
 
-
-
 # Run the main window loop
 root.mainloop()
 

@@ -21,8 +21,6 @@ def preprocess():
 
     X = X.fillna(X.mean())
 
-    # Encoding the classes
-
     return X,y
 
 
