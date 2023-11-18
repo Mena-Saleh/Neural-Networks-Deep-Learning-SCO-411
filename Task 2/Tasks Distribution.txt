@@ -1,0 +1,71 @@
+NN Task 2 requirements distribution
+
+
+
+Reem -> 
+
+Task Description: 
+
+1) Write code for the activation functions (sigmoid and tanh) and their derivatives
+2) Write code to calculate the MSE (done after the MLP algorithm is written)
+3) Report writing (description in lab 5).
+
+File location: 
+
+Algorithms.py
+Report.docx
+
+
+
+
+
+
+Moawad and Medhat -> 
+
+Task Description: 
+
+1) Implement the confusion matrix (Note: it is different from task 2 because this time it is 5 features and 3 classes)
+2) Handle predicting one sample that is to be entered by the user (need to save the normal scaler we used in preprocessing and model parameters to do forward propagation on the user input, Note: this is done at the very end after the whole algorithm is up and running)
+
+
+Files location: 
+
+Metrics.py -> For the confusion matrix
+Preprocess.py -> To save scalers and any objects used in training for the single sample prediction time (you have to use the same scalers etc...) 
+Main.py -> Might need to add additional GUI components to predict a single sample. Ex: a button "Predict Sample" that takes the user to another window and prompts them for the 5 features, then runs the NN on the data and displays result in a messagebox
+
+
+
+
+
+
+Mena and Doaa -> Implement the multi layer perceptron algorithm, which is mainly composed of forward propagation and backward propagation functions
+
+Task Description: 
+
+1) Implement forward propagation (also the same algorithm used to make predictions)
+2) Implement backward propagation (adjusts the weights by back propagating the error signal)
+3) Combine both together to make the final algorithm that is used to train the network. (pseudocode can be found in lab 5)
+
+Files location:
+ 
+Algorithms.py -> Most of the work here
+Main.py -> Need to implement the run() function that stitches everything together
+
+
+
+
+
+BONUS TASK (Not required in the task description provided but you can do it if you have time and want to have some fun :D) visualize the results using PCA to get 2 features out of the 5, then make a plot highlighting the points that belong to each class in addition to highlighting the 3 prediction regions of the 3 classes through the model's parameters.
+
+
+
+FINAL REMARKS
+
+* GUI is mostly done but might need a few changes according to your task, do whatever is necessary.
+* Dependency graph according to tasks dependencies (leftmost done first)
+
+Activation functions and their derivatives -> MLP algorithm (forward prop and backward prop) -> MSE, CM and any other metrics -> Single sample Prediction -> Report
+
+
+
