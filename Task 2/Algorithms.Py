@@ -3,18 +3,24 @@ import pandas as pd
 
 # Activation functions
 
-def tanh():
-    print("To be implemented")
+##values to be between -1 and 1
+##df(a)=1-a²
+##you want the tanh use tanh_and_derivative(x)[0]
+##you want derivative use tanh_and_derivative(x)[1]
+def tanh_and_derivative(x):
+    t = (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
+    dt = 1 - t ** 2
+    return t, dt
 
-def sigmoid():
-    print("To be implemented")
+##f(x)=1/(1+exp(-x) the function range between (0,1)
+## df(x)=f(x)*(1-f(x))
+##you want the sigmoid use sigmoid_and_derivative(x)[0]
+##you want derivative use sigmoid_and_derivative(x)[1]
+def sigmoid_and_derivative(x):
+    s = 1 / (1 + np.exp(-x))
+    df = s * (1 - s)
+    return s, df
 
-
-def tanh_derivative():
-    print("To be implemented")
-
-def sigmoid_derivative():
-    print("To be implemented")
 
 
 # Model helper functions
