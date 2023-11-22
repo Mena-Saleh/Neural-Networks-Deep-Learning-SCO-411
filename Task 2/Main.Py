@@ -8,9 +8,42 @@ import tkinter as tk
 from tkinter import messagebox
 
 
-def run():
-    print("To be implemented")
-   
+def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate , epochs, use_bias, isSigmoid):
+    # Type casting the list of strings to a list of integers.
+    number_of_nodes_in_each_layer = [int(x) for x in number_of_nodes_in_each_layer]
+
+    # Read and preprocess
+    X, y = pp.preprocess()
+
+    # Train/Test split
+    X_train, X_test, y_train, y_test = pp.train_test_split(X,y)
+
+    # Train model
+    W, B = ag.multi_layer_perceptron(X_train, y_train, MSE_threshold = MSE_threshold,
+                                     number_of_hidden_layers = number_of_hidden_layers, 
+                                     number_of_nodes_in_each_layer = number_of_nodes_in_each_layer, 
+                                     learning_rate = learning_rate, 
+                                     epochs = epochs, 
+                                     use_bias = use_bias, 
+                                     isSigmoid = isSigmoid)
+
+    # Make predictions
+    y_pred = [ag.predict(x,W,B, isSigmoid = isSigmoid) for x in X_test]
+
+    #print(W)
+    #print(B)
+    #print(y_pred)
+    
+    # Evaluate model (temporarily built in code)
+
+    from sklearn.metrics import accuracy_score
+
+    # Calculate accuracy using sklearn's accuracy_score function for now
+    accuracy = accuracy_score(y_test, y_pred)
+
+    print("Accuracy:", accuracy)
+
+    # You should use from scratch custom made confusion matrix and other metrics like accuracy
 
 # GUI
 
@@ -86,10 +119,10 @@ activation_label = tk.Label(root, text="Activation Function:", bg=colors["white"
 activation_label.grid(row=8, column=0, padx=(60,35), pady=10, sticky="w")
 
 is_sigmoid_var = tk.BooleanVar(value=False) 
-sigmoid_radio = tk.Radiobutton(root, text="Sigmoid", variable=is_sigmoid_var, value= False, bg=colors["white"])
+sigmoid_radio = tk.Radiobutton(root, text="Sigmoid", variable=is_sigmoid_var, value= True, bg=colors["white"])
 sigmoid_radio.grid(row=8, column=1, padx=20, pady=(10,0), sticky="w")
 
-tanh_radion = tk.Radiobutton(root, text="Hyperbolic Tangent", variable=is_sigmoid_var, value= True, bg=colors["white"])
+tanh_radion = tk.Radiobutton(root, text="Hyperbolic Tangent", variable=is_sigmoid_var, value= False, bg=colors["white"])
 tanh_radion.grid(row=9, column=1, padx=20, pady=(0,10), sticky="w")
 
 # Metrics label
@@ -102,7 +135,15 @@ run_btn.place(x = 550, y = 450 )
 
 
 
-run_btn.config(command = lambda: run())
+run_btn.config(command = lambda: run(
+                             float(MSE_entry.get()), 
+                             int(hidden_layers_count_entry.get()),
+                             hidden_nodes_count_entry.get().split(" "),
+                             float(learning_rate_entry.get()),
+                             int(epochs_entry.get()), 
+                             use_bias_var.get(),
+                             is_sigmoid_var.get(),
+                             ))
 
 # Run the main window loop
 root.mainloop()

@@ -39,7 +39,7 @@ Main.py -> Might need to add additional GUI components to predict a single sampl
 
 
 
-Mena and Doaa -> Implement the multi layer perceptron algorithm, which is mainly composed of forward propagation and backward propagation functions
+Mena and Doaa -> 
 
 Task Description: 
 

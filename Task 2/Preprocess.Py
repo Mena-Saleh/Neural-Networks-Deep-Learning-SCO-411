@@ -20,14 +20,15 @@ def preprocess():
     # Filling missing values
 
     X = X.fillna(X.mean())
-
-    # Might need to encode y if necessary
     
     return X,y
 
 
 
 def train_test_split(X,y, train_per_class=30, test_per_class=20):
+    # Convert DataFrames to NumPy arrays
+    X = X.to_numpy()
+    y = y.to_numpy()
     # Shuffling the two classes' indices randomly
     indices_class1 = np.random.permutation(np.arange(50)) 
     indices_class2 = np.random.permutation(np.arange(50, 100)) 
