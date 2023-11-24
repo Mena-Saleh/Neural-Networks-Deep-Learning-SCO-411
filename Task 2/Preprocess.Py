@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import joblib
 
 
 
@@ -15,6 +16,7 @@ def preprocess():
     scaler = StandardScaler()
 
     X = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+    joblib.dump(scaler, 'scaler.pkl')
 
 
     # Filling missing values

@@ -118,7 +118,7 @@ def backward_propagate(y, W, activations, gradients):
     return layers_errors
 
 
-
+# Updates weights using calculated gradients
 def update_weights(x, W, B, layers_errors, activations, learning_rate, use_bias):
     # All layers inputs (starting with x, then a series of hidden layers activations) in one matrix (Excluding last layer activation)
     inputs = [x] + activations[:-1]  # Exclude output layer activation

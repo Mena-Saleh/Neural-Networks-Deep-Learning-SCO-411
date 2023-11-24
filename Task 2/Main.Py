@@ -4,11 +4,12 @@ import pandas as pd
 import Preprocess as pp
 import Algorithms as ag
 import Metrics as mt
-import tkinter as tk
-from tkinter import messagebox
+from sklearn.preprocessing import MinMaxScaler
+import joblib
+from tkinter import simpledialog, messagebox
 
-
-def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate , epochs, use_bias, isSigmoid):
+# Function to run the neural network
+def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate, epochs, use_bias, is_sigmoid):
     # Type casting the list of strings to a list of integers.
     number_of_nodes_in_each_layer = [int(x) for x in number_of_nodes_in_each_layer]
 
@@ -16,26 +17,24 @@ def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, l
     X, y = pp.preprocess()
 
     # Train/Test split
-    X_train, X_test, y_train, y_test = pp.train_test_split(X,y)
+    X_train, X_test, y_train, y_test = pp.train_test_split(X, y)
 
     # Train model
-    W, B = ag.multi_layer_perceptron(X_train, y_train, MSE_threshold = MSE_threshold,
-                                     number_of_hidden_layers = number_of_hidden_layers, 
-                                     number_of_nodes_in_each_layer = number_of_nodes_in_each_layer, 
-                                     learning_rate = learning_rate, 
-                                     epochs = epochs, 
-                                     use_bias = use_bias, 
-                                     isSigmoid = isSigmoid)
+    W, B = ag.multi_layer_perceptron(X_train, y_train, MSE_threshold=MSE_threshold,
+                                     number_of_hidden_layers=number_of_hidden_layers,
+                                     number_of_nodes_in_each_layer=number_of_nodes_in_each_layer,
+                                     learning_rate=learning_rate,
+                                     epochs=epochs,
+                                     use_bias=use_bias,
+                                     isSigmoid=is_sigmoid)
 
+    # Save the model parameters
+    model_params = {'W': W, 'B': B,'is_sigmoid': is_sigmoid}
+    joblib.dump(model_params, 'model_params.pkl')
     # Make predictions
-    y_pred = [ag.predict(x,W,B, isSigmoid = isSigmoid) for x in X_test]
-
-    #print(W)
-    #print(B)
-    #print(y_pred)
+    y_pred = [ag.predict(x, W, B, isSigmoid=is_sigmoid) for x in X_test]
     
-    # Evaluate model (temporarily built in code)
-
+    # Evaluate model (temporarily built-in code)
     from sklearn.metrics import accuracy_score
 
     # Calculate accuracy using sklearn's accuracy_score function for now
@@ -43,9 +42,62 @@ def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, l
 
     print("Accuracy:", accuracy)
 
-    # You should use from scratch custom made confusion matrix and other metrics like accuracy
+    # Metrics
+    #cm = mt.compute_confusion_matrix(y_test, y_pred)
+    #print(cm.matrix)
 
-# GUI
+# Function to predict a sample
+def predict_sample_gui():
+    # Create a new window for input
+    sample_window = tk.Toplevel(root)
+    sample_window.title("Predict Sample")
+    sample_window.config(bg=colors["white"])
+
+    # Label and entry widgets for 5 features
+    feature_labels = ["Area", "Perimeter", "MajorAxisLength", "MinorAxisLength", "Roundness"]
+    feature_entries = []
+
+    for i, label in enumerate(feature_labels):
+        tk.Label(sample_window, text=label + ":", bg=colors["white"]).grid(row=i, column=0, padx=10, pady=10, sticky="w")
+        entry = tk.Entry(sample_window, width=15)
+        entry.grid(row=i, column=1, padx=10, pady=10)
+        feature_entries.append(entry)
+
+    # Button to predict the sample
+    predict_btn = tk.Button(sample_window, text="Predict", bg=colors["burgundy"], fg=colors["white"],
+                            width=15, height=2, relief="flat", command=lambda: predict_sample_nn(feature_entries))
+    predict_btn.grid(row=len(feature_labels), column=0, columnspan=2, pady=20)
+
+
+# Function to predict using the neural network
+def predict_sample_nn(feature_entries):
+    try:
+        # Extract feature values from entries
+        features = [float(entry.get()) for entry in feature_entries]
+
+        # Load the scaler
+        scaler = joblib.load('scaler.pkl')
+
+        # Scale the features
+        scaled_features = scaler.transform([features])
+
+        # Reshape to match expected input shape
+        scaled_features = scaled_features.reshape((5,))
+
+        # Load the saved model parameters
+        model_params = joblib.load('model_params.pkl')
+        W, B, is_sigmoid = model_params['W'], model_params['B'], model_params['is_sigmoid']
+
+        # Use the neural network model to make predictions
+        prediction_result = ag.predict(scaled_features, W, B, isSigmoid=is_sigmoid)
+
+        # Display the prediction result in a messagebox
+        messagebox.showinfo("Prediction Result", f"The predicted result is: {prediction_result}")
+
+    except ValueError:
+        messagebox.showerror("Error", "Invalid input. Please enter valid numerical values for features.")
+
+# GUI code
 
 # Define colors
 colors = {
@@ -62,7 +114,7 @@ root.title("Multi Layer Perceptron NN Trainer")
 root.config(bg=colors["white"])
 root.geometry("800x520") 
 root.resizable(False, False)
-root.iconbitmap("icon.ico")
+#root.iconbitmap("icon.ico")
 
 
 
@@ -145,9 +197,10 @@ run_btn.config(command = lambda: run(
                              is_sigmoid_var.get(),
                              ))
 
+# Add the "Predict Sample" button
+predict_sample_btn = tk.Button(root, text="Predict Sample", bg=colors["burgundy"], fg=colors["white"],
+                                width=20, height=2, relief="flat", command=predict_sample_gui)
+predict_sample_btn.place(x=330, y=450)
+
 # Run the main window loop
 root.mainloop()
-
-
-
-
