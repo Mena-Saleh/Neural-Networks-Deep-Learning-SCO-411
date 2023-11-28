@@ -11,7 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # Function to run the neural network
-def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate, epochs, use_bias, is_sigmoid):
+def run(number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate, epochs, use_bias, is_sigmoid):
     # Type casting the list of strings to a list of integers.
     number_of_nodes_in_each_layer = [int(x) for x in number_of_nodes_in_each_layer]
 
@@ -22,7 +22,7 @@ def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, l
     X_train, X_test, y_train, y_test = pp.train_test_split(X, y)
 
     # Train model
-    W, B = ag.multi_layer_perceptron(X_train, y_train, MSE_threshold=MSE_threshold,
+    W, B = ag.multi_layer_perceptron(X_train, y_train,
                                      number_of_hidden_layers=number_of_hidden_layers,
                                      number_of_nodes_in_each_layer=number_of_nodes_in_each_layer,
                                      learning_rate=learning_rate,
@@ -144,7 +144,7 @@ colors = {
 root = tk.Tk()
 root.title("Multi Layer Perceptron NN Trainer")
 root.config(bg=colors["white"])
-root.geometry("800x520") 
+root.geometry("800x500") 
 root.resizable(False, False)
 #root.iconbitmap("icon.ico")
 
@@ -185,39 +185,31 @@ epochs_entry = tk.Entry(root, width=26)
 epochs_entry.insert(0, 100)
 epochs_entry.grid(row=5, column=1, padx=30, pady=10, sticky="w")
 
-# MSE entry
-MSE_label = tk.Label(root, text="MSE threshold:", bg=colors["white"])
-MSE_label.grid(row=6, column=0, padx=60, pady=10, sticky="w")
-
-MSE_entry = tk.Entry(root, width=26)
-MSE_entry.insert(0, 0.02)
-MSE_entry.grid(row=6, column=1, padx=30, pady=10, sticky="w")
 
 # Bias checkbox
 use_bias_var = tk.BooleanVar(value=True)
 bias_check = tk.Checkbutton(root, text="Use Bias", variable= use_bias_var, bg=colors["white"],)
-bias_check.grid(row=7, column=0, columnspan=2, sticky = 'w',  padx=60, pady=10,)
+bias_check.grid(row=6, column=0, columnspan=2, sticky = 'w',  padx=60, pady=10,)
 
 # Activation radio button
 activation_label = tk.Label(root, text="Activation Function:", bg=colors["white"])
-activation_label.grid(row=8, column=0, padx=(60,35), pady=10, sticky="w")
+activation_label.grid(row=7, column=0, padx=(60,35), pady=10, sticky="w")
 
 is_sigmoid_var = tk.BooleanVar(value=False) 
 sigmoid_radio = tk.Radiobutton(root, text="Sigmoid", variable=is_sigmoid_var, value= True, bg=colors["white"])
-sigmoid_radio.grid(row=8, column=1, padx=20, pady=(10,0), sticky="w")
+sigmoid_radio.grid(row=7, column=1, padx=20, pady=(10,0), sticky="w")
 
 tanh_radion = tk.Radiobutton(root, text="Hyperbolic Tangent", variable=is_sigmoid_var, value= False, bg=colors["white"])
-tanh_radion.grid(row=9, column=1, padx=20, pady=(0,10), sticky="w")
+tanh_radion.grid(row=8, column=1, padx=20, pady=(0,10), sticky="w")
 
 
 # Run button
 run_btn = tk.Button(root, text="Run", bg=colors["burgundy"], fg=colors["white"], width=20, height=2, relief="flat")
-run_btn.place(x = 550, y = 450 )
+run_btn.place(x = 550, y = 430 )
 
 
 
 run_btn.config(command = lambda: run(
-                             float(MSE_entry.get()), 
                              int(hidden_layers_count_entry.get()),
                              hidden_nodes_count_entry.get().split(" "),
                              float(learning_rate_entry.get()),
@@ -229,7 +221,7 @@ run_btn.config(command = lambda: run(
 # Add the "Predict Sample" button
 predict_sample_btn = tk.Button(root, text="Predict Sample", bg=colors["burgundy"], fg=colors["white"],
                                 width=20, height=2, relief="flat", command=predict_sample)
-predict_sample_btn.place(x=330, y=450)
+predict_sample_btn.place(x=330, y=430)
 
 # Run the main window loop
 root.mainloop()

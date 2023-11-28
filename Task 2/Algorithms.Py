@@ -133,7 +133,7 @@ def update_weights(x, W, B, layers_errors, activations, learning_rate, use_bias)
 
 
 # Main algorithm function
-def multi_layer_perceptron(X,y, MSE_threshold = 0.02, number_of_hidden_layers = 2, number_of_nodes_in_each_layer = [4,5] , learning_rate = 0.01, epochs= 100, use_bias = True, isSigmoid = True):
+def multi_layer_perceptron(X,y, number_of_hidden_layers = 2, number_of_nodes_in_each_layer = [4,5] , learning_rate = 0.01, epochs= 100, use_bias = True, isSigmoid = True):
 
     # Initialization
     n_samples, n_features = X.shape
