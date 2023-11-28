@@ -9,7 +9,9 @@ def visualize_model():
     print("To be implemented")
 
 # Computes confusion matrix in addition to accuracy, recall and precision (on 3 classes rather than 2)
-def compute_confusion_matrix(y, y_pred,num_classes=3):
+import numpy as np
+
+def compute_confusion_matrix(y, y_pred, num_classes=3):
     # Initialize the confusion matrix with zeros
     matrix = np.zeros((num_classes, num_classes), dtype=int)
 
@@ -17,16 +19,18 @@ def compute_confusion_matrix(y, y_pred,num_classes=3):
     for true_label, pred_label in zip(y, y_pred):
         matrix[true_label, pred_label] += 1
 
-    # Calculate true positives, true negatives, false positives, and false negatives
+    # Calculate true positives, false positives, and false negatives
     tp = np.diag(matrix)
     fp = np.sum(matrix, axis=0) - tp
     fn = np.sum(matrix, axis=1) - tp
-    tn = np.sum(np.sum(matrix)) - (tp + fp + fn)
 
     # Calculate precision, recall, and accuracy
-    precision = tp / (tp + fp) if np.any(tp + fp != 0) else np.zeros(num_classes)
-    recall = tp / (tp + fn) if np.any(tp + fn != 0) else np.zeros(num_classes)
+    precision = np.divide(tp, tp + fp, where=(tp + fp) != 0)
+    recall = np.divide(tp, tp + fn, where=(tp + fn) != 0)
     accuracy = np.sum(tp) / np.sum(matrix)
+
+    # Calculate true negatives for each class
+    tn = np.sum(matrix) - (fp + fn + tp)
 
     return {
         'confusion_matrix': matrix,
@@ -38,6 +42,14 @@ def compute_confusion_matrix(y, y_pred,num_classes=3):
         'recall': recall,
         'accuracy': accuracy
     }
+
+
+def compute_accuracy(y,y_pred):
+    return np.sum(y == y_pred)/len(y)
+
+
+
+
 
 
 

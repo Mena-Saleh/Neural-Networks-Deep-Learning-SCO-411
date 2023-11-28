@@ -7,6 +7,8 @@ import Metrics as mt
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 from tkinter import simpledialog, messagebox
+from sklearn.preprocessing import LabelEncoder
+
 
 # Function to run the neural network
 def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, learning_rate, epochs, use_bias, is_sigmoid):
@@ -33,21 +35,56 @@ def run(MSE_threshold, number_of_hidden_layers, number_of_nodes_in_each_layer, l
     joblib.dump(model_params, 'model_params.pkl')
     # Make predictions
     y_pred = [ag.predict(x, W, B, isSigmoid=is_sigmoid) for x in X_test]
+    y_train_pred = [ag.predict(x, W, B, isSigmoid=is_sigmoid) for x in X_train]
+
+    # Evaluate model
+    # Label encoding because confusion matrix function expects numeric values
+    label_encoder = LabelEncoder()
+
+    y_test_1 = label_encoder.fit_transform(y_test) # BOMBAY -> 0, SIRA -> 1, CALi -> 2
+    y_pred_1 = label_encoder.transform(y_pred)
+
+    matrix=mt.compute_confusion_matrix(y_test_1, y_pred_1)
+
+    training_accuracy = mt.compute_accuracy(y_train, y_train_pred)
+    show_results(matrix, training_accuracy)
+
+
+
+def show_results(results, training_accuracy):
+    results_window = tk.Toplevel(root)
+    results_window.title("Results")
+    results_window.config(bg=colors["white"])
+
+    # Display confusion matrix
+    confusion_matrix_label = tk.Label(results_window, text="Confusion Matrix:", bg=colors["white"])
+    confusion_matrix_label.pack()
+
+    # Display confusion matrix as text
+    for row in results['confusion_matrix']:
+        row_str = " ".join(map(str, row))
+        row_label = tk.Label(results_window, text=row_str, bg=colors["white"])
+        row_label.pack()
+    i=1
+    for i in range(3):
+        mass_label = tk.Label(results_window,text=f"Class {i+1}",bg=colors["white"])
+        mass_label.pack()
+        precision_label = tk.Label(results_window, text=f"Precision: {results['precision'][i]}", bg=colors["white"])
+        precision_label.pack()
+        recall_label = tk.Label(results_window, text=f"Recall: {results['recall'][i]}", bg=colors["white"])
+        recall_label.pack()
+
     
-    # Evaluate model (temporarily built-in code)
-    from sklearn.metrics import accuracy_score
 
-    # Calculate accuracy using sklearn's accuracy_score function for now
-    accuracy = accuracy_score(y_test, y_pred)
+    # Display overall accuracy
+    accuracy_text =  f"Training Accuracy: {training_accuracy:.2%}\nTesting Accuracy: {results['accuracy']:.2%}"
+    accuracy_label = tk.Label(results_window, text= accuracy_text, bg=colors["white"])
+    accuracy_label.pack()
 
-    print("Accuracy:", accuracy)
 
-    # Metrics
-    #cm = mt.compute_confusion_matrix(y_test, y_pred)
-    #print(cm.matrix)
 
 # Function to predict a sample
-def predict_sample_gui():
+def predict_sample():
     # Create a new window for input
     sample_window = tk.Toplevel(root)
     sample_window.title("Predict Sample")
@@ -68,7 +105,6 @@ def predict_sample_gui():
                             width=15, height=2, relief="flat", command=lambda: predict_sample_nn(feature_entries))
     predict_btn.grid(row=len(feature_labels), column=0, columnspan=2, pady=20)
 
-
 # Function to predict using the neural network
 def predict_sample_nn(feature_entries):
     try:
@@ -77,17 +113,13 @@ def predict_sample_nn(feature_entries):
 
         # Load the scaler
         scaler = joblib.load('scaler.pkl')
-
         # Scale the features
         scaled_features = scaler.transform([features])
-
-        # Reshape to match expected input shape
-        scaled_features = scaled_features.reshape((5,))
-
+        scaled_features=scaled_features.reshape((5,))
         # Load the saved model parameters
         model_params = joblib.load('model_params.pkl')
         W, B, is_sigmoid = model_params['W'], model_params['B'], model_params['is_sigmoid']
-
+        
         # Use the neural network model to make predictions
         prediction_result = ag.predict(scaled_features, W, B, isSigmoid=is_sigmoid)
 
@@ -177,9 +209,6 @@ sigmoid_radio.grid(row=8, column=1, padx=20, pady=(10,0), sticky="w")
 tanh_radion = tk.Radiobutton(root, text="Hyperbolic Tangent", variable=is_sigmoid_var, value= False, bg=colors["white"])
 tanh_radion.grid(row=9, column=1, padx=20, pady=(0,10), sticky="w")
 
-# Metrics label
-metrics_label = tk.Label(root, bg=colors["white"])
-metrics_label.place(x = 520, y = 40)
 
 # Run button
 run_btn = tk.Button(root, text="Run", bg=colors["burgundy"], fg=colors["white"], width=20, height=2, relief="flat")
@@ -199,7 +228,7 @@ run_btn.config(command = lambda: run(
 
 # Add the "Predict Sample" button
 predict_sample_btn = tk.Button(root, text="Predict Sample", bg=colors["burgundy"], fg=colors["white"],
-                                width=20, height=2, relief="flat", command=predict_sample_gui)
+                                width=20, height=2, relief="flat", command=predict_sample)
 predict_sample_btn.place(x=330, y=450)
 
 # Run the main window loop
