@@ -73,9 +73,11 @@ class EnglishPreprocessor:
 
 
 # Main function
-def preprocess_data():
-    # Read data
-    df = pd.read_excel("train.xlsx")
+def preprocess_df(df, out_name, num_samples=-1):
+    # If num_rows is not -1 and less than the total rows, randomly sample the specified number of rows
+    if num_samples != -1 and num_samples < len(df):
+        df = df.sample(n=num_samples, random_state=42)  # random_state ensures reproducibility
+
     # Preprocess English and Arabic text data
     ar_pre = ArabicPreprocessor()
     en_pre = EnglishPreprocessor()
@@ -84,32 +86,27 @@ def preprocess_data():
     processed_texts = []
     
     # Iterate over text and preprocess according to language
-    for text in df['review_description']: 
+    for text in df['review_description']:
+        print(text)
         try:
             lang = detect(text)
         except:
             # If language detection fails, default to Arabic
             lang = 'ar'
-
+ 
         if lang == 'en':
             processed_text = en_pre.preprocess(text)
         else:
             processed_text = ar_pre.preprocess(text)
-        
+         
         processed_texts.append(processed_text)
     
-    # Replace text with preprocssed version
+    # Replace text with preprocessed version
     df['review_description'] = processed_texts
     
-    # Save to excel
-    df.to_excel('preprocessed', index=False)
+    # Save to Excel
+    df.to_excel(f'preprocessed_{out_name}.xlsx', index=False)
     
     return df
 
 
-
-#preprocess_data()
-
-ar = ArabicPreprocessor()
-t = ar.preprocess("اهم شي انه المطاعم تخاف وتجيب الاكل حار 😎")
-print(t)
