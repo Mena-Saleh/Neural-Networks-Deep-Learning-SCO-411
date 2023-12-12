@@ -6,7 +6,14 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support, con
 import numpy as np
 
 
-
+# Check for CUDA GPU availability
+device_name = tf.test.gpu_device_name()
+if device_name != '':
+    print(f'Device GPU: {device_name}')
+else:
+    print('Device CPU: No GPU found, using CPU instead.')
+    
+    
 def build_LSTM(input_shape, output_units=3):
     # Model architecture
     model = Sequential()
