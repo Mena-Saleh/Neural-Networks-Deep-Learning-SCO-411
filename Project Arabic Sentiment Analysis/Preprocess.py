@@ -52,11 +52,11 @@ class ArabicPreprocessor:
         text = text.translate(translator)
 
         # Split emojis from other text and rejoin without spaces
-        em = text
-        em_split_emoji = emoji.get_emoji_regexp().split(em)
-        em_split_whitespace = [substr.split() for substr in em_split_emoji]
-        em_split = functools.reduce(operator.concat, em_split_whitespace)
-        text = " ".join(em_split)
+        # em = text
+        # em_split_emoji = emoji.get_emoji_regexp().split(em)
+        # em_split_whitespace = [substr.split() for substr in em_split_emoji]
+        # em_split = functools.reduce(operator.concat, em_split_whitespace)
+        # text = " ".join(em_split)
 
         # Reduce characters that appear more than twice in a row to a single character
         text = re.sub(r'(.)\1+', r'\1', text)

@@ -8,7 +8,7 @@ import Models as md
 
 # [ONLY NEED TO RUN ONCE AND THEN IT SAVES PREPROCESSED DATA]
 
-# # Read data
+# Read data
 # df = pd.read_excel("train.xlsx")
 
 # # Split into training and (validation + test)
@@ -19,10 +19,9 @@ import Models as md
 
 
 # # Preprocess each df
-# train_df = pp.preprocess_df(train_df, "train", num_samples= 3000)
-# val_df = pp.preprocess_df(val_df, "val", num_samples= 300)
-# test_df = pp.preprocess_df(test_df, "test", num_samples= 300)
-
+# train_df = pp.preprocess_df(train_df, "train")
+# val_df = pp.preprocess_df(val_df, "val")
+# test_df = pp.preprocess_df(test_df, "test")
 
 
 
@@ -39,15 +38,17 @@ tf_idf_train = fe.TF_IDF_vectorize(train_df['review_description'])
 tf_idf_val = fe.TF_IDF_vectorize(val_df['review_description'], is_test= True)
 tf_idf_test = fe.TF_IDF_vectorize(test_df['review_description'], is_test= True)
 
-# Convert the sparse TF-IDF matrices to dense format
-tf_idf_train_dense = tf_idf_train.todense()
-tf_idf_val_dense = tf_idf_val.todense()
-tf_idf_test_dense = tf_idf_test.todense()
+# Reshape arrays for the sequential models.
+tf_idf_train= tf_idf_train.toarray()
+# Save original shape for model first layer input shape specification.
+model_shape = tf_idf_train.shape
+# Reshape all datasets.
+tf_idf_train = np.reshape(tf_idf_train, newshape=(tf_idf_train.shape[0],1, tf_idf_train.shape[1]))
+tf_idf_val= tf_idf_val.toarray()
+tf_idf_val = np.reshape(tf_idf_val, newshape=(tf_idf_val.shape[0],1, tf_idf_val.shape[1]))
+tf_idf_test= tf_idf_test.toarray()
+tf_idf_test = np.reshape(tf_idf_test, newshape=(tf_idf_test.shape[0],1, tf_idf_test.shape[1]))
 
-# Expand dimensions
-tf_idf_train_expanded = np.expand_dims(tf_idf_train_dense, axis=-1)
-tf_idf_val_expanded = np.expand_dims(tf_idf_val_dense, axis=-1)
-tf_idf_test_expanded = np.expand_dims(tf_idf_test_dense, axis=-1)
 
 # Target value of each set
 y_train = train_df['rating']
@@ -55,12 +56,8 @@ y_val = val_df['rating']
 y_test = test_df['rating']
 
 
-#print(tf_idf_train)
-
-
-
 # Train and evaluate models
 
 #1 LSTM
-LSTM_model = md.build_LSTM(input_shape=(tf_idf_train_expanded.shape[1], tf_idf_train_expanded.shape[2]))
-md.train_evaluate_predict_model(LSTM_model, tf_idf_train_expanded, y_train, tf_idf_val_expanded, y_val, tf_idf_test_expanded, y_test, 'LSTM.h5')
+LSTM_model = md.build_LSTM(input_shape=(1, model_shape[1]))
+md.train_evaluate_predict_model(LSTM_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'LSTM.h5')

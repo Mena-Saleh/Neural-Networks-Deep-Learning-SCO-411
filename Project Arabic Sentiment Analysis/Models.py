@@ -17,10 +17,10 @@ else:
 def build_LSTM(input_shape, output_units=3):
     # Model architecture
     model = Sequential()
-    model.add(LSTM(units=128, return_sequences=True, input_shape=input_shape, activation='relu'))
+    model.add(LSTM(units=32, return_sequences=True, input_shape=input_shape, activation='tanh'))
     model.add(Dropout(0.2))
-    model.add(LSTM(units=128, activation='relu'))
-    model.add(Dropout(0.2))
+    # model.add(LSTM(units=128, activation='tanh'))
+    # model.add(Dropout(0.2))
     model.add(Dense(units=output_units, activation='softmax'))
     
     # Compile the model
@@ -51,21 +51,11 @@ def train_evaluate_predict_model(model, x_train, y_train, x_val, y_val, x_test, 
     y_pred_probabilities = model.predict(x_test)
     y_pred = np.argmax(y_pred_probabilities, axis=1)  # Convert probabilities to class predictions
 
-    # Calculate metrics
-    precision, recall, f2_score, _ = precision_recall_fscore_support(y_test, y_pred, beta=2, average='weighted')
-    accuracy = accuracy_score(y_test, y_pred)
-    conf_matrix = confusion_matrix(y_test, y_pred)
-
-    # Print metrics
-    print(f"Test Accuracy: {accuracy}")
-    print(f"F2 Score: {f2_score}")
-    print(f"Precision: {precision}")
-    print(f"Recall: {recall}")
-    print("Confusion Matrix:")
-    print(conf_matrix)
+    # Evaluate model
+    model.evaluate(x_test, y_test)
+    
 
     # Save the model
     model.save(model_path)
     print(f"Model saved to {model_path}")
 
-    return history, accuracy, precision, recall, f2_score, conf_matrix
