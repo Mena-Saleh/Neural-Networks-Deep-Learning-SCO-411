@@ -107,7 +107,7 @@ class EnglishPreprocessor:
 label_mapping = {-1: 0, 0: 1, 1: 2}
 
 # Main function (Optionally define number of samples to preprocess, to process smaller batches for testing if required)
-def preprocess_df(df, out_name, num_samples=-1):
+def preprocess_df(df, out_name, num_samples=-1, isPredict = False):
     
     # If num_rows is not -1 and less than the total rows, randomly sample the specified number of rows
     if num_samples != -1 and num_samples < len(df):
@@ -137,12 +137,14 @@ def preprocess_df(df, out_name, num_samples=-1):
     
     # Replace text with preprocessed version
     df['review_description'] = processed_texts
-         
-    # Map sentiments from -1,0, 0 to 1, 1 ,2
-    df['rating'] = df['rating'].map(label_mapping)
     
-    # Save to Excel
-    df.to_excel(f'preprocessed_{out_name}.xlsx', index=False)
+    # Preprocess target values and save preprocessed data (only if data is labeled, i.e in training and testing, not prediction)
+    if not isPredict:
+        # Map sentiments from -1,0, 0 to 1, 1 ,2
+        df['rating'] = df['rating'].map(label_mapping)
+    
+        # Save to Excel
+        df.to_excel(f'preprocessed_{out_name}.xlsx', index=False)
     
     return df
 
