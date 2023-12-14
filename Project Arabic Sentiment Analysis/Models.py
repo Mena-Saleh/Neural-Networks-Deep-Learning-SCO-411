@@ -46,16 +46,7 @@ def train_evaluate_model(model, x_train, y_train, x_val, y_val, x_test, y_test, 
                         validation_data=(x_val, y_val),
                         callbacks=[early_stopping, checkpoint])
     
-    # Save final model (not necessarily the best)
-    
-    model.save('Last_' + model_path)
-    
-    # Evaluate final model on test data
-    test_loss, val_accuracy = model.evaluate(x_test, y_test, verbose=0)
-    print("last model")
-    print(f"Test Loss: {test_loss}")
-    print(f"Test Accuracy: {val_accuracy}")
-    
+   
     
     # Evaluate the best model on test data
     
