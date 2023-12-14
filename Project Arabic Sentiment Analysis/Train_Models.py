@@ -12,10 +12,10 @@ import Models as md
 # df = pd.read_excel("train.xlsx")
 
 # # Split into training and (validation + test)
-# train_df, val_test_df = train_test_split(df, test_size=0.3, random_state=42)
+# train_df, val_test_df = train_test_split(df, test_size = 2000, random_state=42)
 
 # # Split the (validation + test) into validation and test
-# val_df, test_df = train_test_split(val_test_df, test_size=0.5, random_state=42)
+# val_df, test_df = train_test_split(val_test_df, test_size = 1000, random_state=42)
 
 
 # # Preprocess each df
@@ -38,16 +38,24 @@ tf_idf_train = fe.TF_IDF_vectorize(train_df['review_description'])
 tf_idf_val = fe.TF_IDF_vectorize(val_df['review_description'], is_test= True)
 tf_idf_test = fe.TF_IDF_vectorize(test_df['review_description'], is_test= True)
 
-# Reshape arrays for the sequential models.
-tf_idf_train= tf_idf_train.toarray()
 # Save original shape for model first layer input shape specification.
 model_shape = tf_idf_train.shape
-# Reshape all datasets.
+
+# Convert to arrays and reshape for the sequential models.
+tf_idf_train= tf_idf_train.toarray()
 tf_idf_train = np.reshape(tf_idf_train, newshape=(tf_idf_train.shape[0],1, tf_idf_train.shape[1]))
 tf_idf_val= tf_idf_val.toarray()
 tf_idf_val = np.reshape(tf_idf_val, newshape=(tf_idf_val.shape[0],1, tf_idf_val.shape[1]))
 tf_idf_test= tf_idf_test.toarray()
 tf_idf_test = np.reshape(tf_idf_test, newshape=(tf_idf_test.shape[0],1, tf_idf_test.shape[1]))
+
+
+# Print all shapes
+print("Neural Network shape:", model_shape)
+print("Train set shape:", tf_idf_train.shape)
+print("Validation set shape:", tf_idf_val.shape)
+print("Test set shape:", tf_idf_test.shape)
+
 
 
 # Target value of each set
@@ -60,4 +68,4 @@ y_test = test_df['rating']
 
 #1 LSTM
 LSTM_model = md.build_LSTM(input_shape=(1, model_shape[1]))
-md.train_evaluate_predict_model(LSTM_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'LSTM.h5')
+md.train_evaluate_model(LSTM_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'LSTM.keras')

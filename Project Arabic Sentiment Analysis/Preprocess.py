@@ -52,11 +52,11 @@ class ArabicPreprocessor:
         text = text.translate(translator)
 
         # Split emojis from other text and rejoin without spaces
-        # em = text
-        # em_split_emoji = emoji.get_emoji_regexp().split(em)
-        # em_split_whitespace = [substr.split() for substr in em_split_emoji]
-        # em_split = functools.reduce(operator.concat, em_split_whitespace)
-        # text = " ".join(em_split)
+        em = text
+        em_split_emoji = emoji.get_emoji_regexp().split(em)
+        em_split_whitespace = [substr.split() for substr in em_split_emoji]
+        em_split = functools.reduce(operator.concat, em_split_whitespace)
+        text = " ".join(em_split)
 
         # Reduce characters that appear more than twice in a row to a single character
         text = re.sub(r'(.)\1+', r'\1', text)
@@ -138,7 +138,7 @@ def preprocess_df(df, out_name, num_samples=-1):
     # Replace text with preprocessed version
     df['review_description'] = processed_texts
          
-    # Map sentiments from -1,0,1 to 0, 1 ,2
+    # Map sentiments from -1,0, 0 to 1, 1 ,2
     df['rating'] = df['rating'].map(label_mapping)
     
     # Save to Excel

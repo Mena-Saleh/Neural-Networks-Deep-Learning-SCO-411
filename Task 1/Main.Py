@@ -85,7 +85,7 @@ root.title("Perceptron and Adaline NN Trainer")
 root.config(bg=colors["white"])
 root.geometry("800x520") 
 root.resizable(False, False)
-root.iconbitmap("icon.ico")
+#root.iconbitmap("icon.ico")
 
 
 # Features and Classes
