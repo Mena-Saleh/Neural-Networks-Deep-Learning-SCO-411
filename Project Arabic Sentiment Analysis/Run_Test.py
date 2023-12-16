@@ -19,7 +19,7 @@ tf_idf = tf_idf.toarray()
 tf_idf = np.reshape(tf_idf, newshape=(tf_idf.shape[0],1, tf_idf.shape[1]))
 
 # Load model and predict
-best_model = load_model('LSTM.keras')
+best_model = load_model('Saved Models/Bidirectional LSTM.h5')
 
 # Gets probabilities of all classes using softmax function
 predictions = best_model.predict(tf_idf)
@@ -28,10 +28,12 @@ predictions = best_model.predict(tf_idf)
 predicted_classes = np.argmax(predictions, axis=1)
 predicted_classes = predicted_classes - 1
 
+
 # Save as CSV in the correct format (ID, rating)
 
 new_df = pd.DataFrame(df.iloc[:, 0])
 new_df['rating'] = predicted_classes
 
 new_df.to_csv('95.csv', index= False)
+print("Saved to csv file successfully.")
 

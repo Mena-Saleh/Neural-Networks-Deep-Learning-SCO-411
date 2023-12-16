@@ -8,7 +8,7 @@ import Models as md
 
 # [ONLY NEED TO RUN ONCE AND THEN IT SAVES PREPROCESSED DATA]
 
-# Read data
+# # Read data
 # df = pd.read_excel("train.xlsx")
 
 # # Split into training and (validation + test)
@@ -67,5 +67,25 @@ y_test = test_df['rating']
 # Train and evaluate models
 
 #1 LSTM
-LSTM_model = md.build_LSTM(input_shape=(1, model_shape[1]))
-md.train_evaluate_model(LSTM_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'LSTM.keras')
+print("#1 LSTM model \n")
+lstm_model = md.build_lstm(input_shape=(1, model_shape[1]))
+md.train_evaluate_model(lstm_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'Saved Models/LSTM.h5')
+print("\n")
+
+#2 Bidirectional LSTM
+print("#2 Bidirectional LSTM model \n")
+bidirectional_lstm_model = md.build_lstm_bidirectional(input_shape=(1, model_shape[1]))
+md.train_evaluate_model(bidirectional_lstm_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'Saved Models/Bidirectional LSTM.h5')
+print("\n")
+
+#3 Simple RNN
+print("#3 Simple RNN model \n")
+simple_rnn_model = md.build_simple_rnn(input_shape=(1, model_shape[1]))
+md.train_evaluate_model(simple_rnn_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'Saved Models/Simple RNN.h5')
+print("\n")
+
+#4 GRU
+print("#4 GRU model \n")
+gru_model = md.build_gru(input_shape=(1, model_shape[1]))
+md.train_evaluate_model(gru_model, tf_idf_train, y_train, tf_idf_val, y_val, tf_idf_test, y_test, 'Saved Models/GRU.h5')
+print("\n")

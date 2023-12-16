@@ -19,8 +19,8 @@ import pyarabic.araby as ar
 import re , emoji, Stemmer, functools, operator, string
 from nltk.stem.isri import ISRIStemmer
 from sklearn.model_selection import train_test_split
-nltk.download('wordnet')
-nltk.download('stopwords')
+#nltk.download('wordnet')
+#nltk.download('stopwords')
 
 
 # NLP pipeline classes for Arabic and English
