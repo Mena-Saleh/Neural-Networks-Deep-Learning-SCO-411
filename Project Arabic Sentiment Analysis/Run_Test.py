@@ -11,18 +11,21 @@ preprocessed_df = pp.preprocess_df(df, "train", isPredict=True)
 
 # Extact features
 
-# TF-IDF
-tf_idf = fe.TF_IDF_vectorize(preprocessed_df['review_description'], is_test=True)
+# # TF-IDF
+# tf_idf = fe.TF_IDF_vectorize(preprocessed_df['review_description'], is_test=True)
 
-# Convert to array and reshape
-tf_idf = tf_idf.toarray()
-tf_idf = np.reshape(tf_idf, newshape=(tf_idf.shape[0],1, tf_idf.shape[1]))
+# # Convert to array and reshape
+# tf_idf = tf_idf.toarray()
+# tf_idf = np.reshape(tf_idf, newshape=(tf_idf.shape[0],1, tf_idf.shape[1]))
+
+## Word Embedding
+embedding, _, _ = fe.prepare_for_embedding(preprocessed_df['review_description'], is_test=True, max_length=100)
 
 # Load model and predict
-best_model = load_model('Saved Models/Bidirectional LSTM.h5')
+best_model = load_model('Saved Models/Embedding LSTM.h5')
 
 # Gets probabilities of all classes using softmax function
-predictions = best_model.predict(tf_idf)
+predictions = best_model.predict(embedding)
 
 # Gets max probability (result is 0,1,2, need to map back to -1, 0, 1, can do that by subtracting 1)
 predicted_classes = np.argmax(predictions, axis=1)

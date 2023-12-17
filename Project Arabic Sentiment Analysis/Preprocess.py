@@ -7,18 +7,11 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer, SnowballStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from farasa.stemmer import FarasaStemmer
-from farasa.segmenter import FarasaSegmenter
-from farasa.pos import FarasaPOSTagger
-from farasa.ner import FarasaNamedEntityRecognizer
 import re
 import nltk
 import pyarabic.araby as ar
-# Use pip install emoji==1.4.1 when installing emoji, newer versions are missing the get_emoji_regexp function
 import re , emoji, Stemmer, functools, operator, string
 from nltk.stem.isri import ISRIStemmer
-from sklearn.model_selection import train_test_split
 #nltk.download('wordnet')
 #nltk.download('stopwords')
 
@@ -27,57 +20,61 @@ from sklearn.model_selection import train_test_split
 
 class ArabicPreprocessor:
     def __init__(self):
-        self.segmenter = FarasaSegmenter()
-        self.stemmer = FarasaStemmer()
-        self.postagger = FarasaPOSTagger()
-        self.ner = FarasaNamedEntityRecognizer()
         self.stop_words = set(stopwords.words('arabic'))
         self.st =  Stemmer.Stemmer('arabic')
+        self.snowball_stmmer = SnowballStemmer("arabic")
+        self.isris_stemmer = ISRIStemmer()
         
     def preprocess(self, text):
         # Replace one or more whitespace characters with a single space
         text = re.sub(r'\s+', ' ', text)
 
-        # Remove all standalone numbers - these regex patterns match numbers that are on their own
-        text = re.sub("(\s\d+)","",text) 
-        text = re.sub(r"$\d+\W+|\b\d+\b|\W+\d+$", "", text)
-        text = re.sub("\d+", " ", text)
+        # Normalize certain Arabic characters to their most common forms and remove unnecessary artificats like tashkeel and tatweel
+        text = text.strip()
+        text = re.sub("ى", "ي", text)
+        text = re.sub("ؤ", "ء", text)
+        text = re.sub("ئ", "ء", text)
+        text = re.sub("ة", "ه", text)
 
-        # Remove Arabic diacritics (tashkeel) and letter elongation (tatweel)
+        #remove repetetions
+        text = re.sub("[إأٱآا]", "ا", text)
+        text = text.replace('وو', 'و')
+        text = text.replace('يي', 'ي')
+        text = text.replace('ييي', 'ي')
+        text = text.replace('اا', 'ا')
+
+        # Remove longation
+        text = re.sub(r'(.)\1+', r"\1\1", text) 
+        
+        # Remove tashkeel and tatweel
         text = ar.strip_tashkeel(text)
         text = ar.strip_tatweel(text)
 
         # Remove punctuation marks
-        translator = str.maketrans('', '', string.punctuation)
-        text = text.translate(translator)
-
-        # Split emojis from other text and rejoin without spaces
-        em = text
-        em_split_emoji = emoji.get_emoji_regexp().split(em)
-        em_split_whitespace = [substr.split() for substr in em_split_emoji]
-        em_split = functools.reduce(operator.concat, em_split_whitespace)
-        text = " ".join(em_split)
-
+        text = text.translate(str.maketrans('', '', string.punctuation))
+        
         # Reduce characters that appear more than twice in a row to a single character
         text = re.sub(r'(.)\1+', r'\1', text)
 
         # Remove stop words
-        words = text.split()  # Tokenize the text into words
-        filtered_words = [word for word in words if word.lower() not in self.stop_words]
-        text =  ' '.join(filtered_words)  # Join words back into a string        
+        text = ' '.join([word for word in text.split() if word.lower() not in self.stop_words])
         
-        # Stem the words in the text
-        text = " ".join([self.st.stemWord(i) for i in text.split()])
-
-        # Normalize certain Arabic characters to their most common forms
-        text = text.replace("آ", "ا")
-        text = text.replace("إ", "ا")
-        text = text.replace("أ", "ا")
-        text = text.replace("ؤ", "و")
-        text = text.replace("ئ", "ي")
+        # Stem the words in the text (Try different stemmers)
         
-
+        # Stemmer library
+        #text = " ".join([self.st.stemWord(word) for word in text.split()])
+        
+        # Snowball stemmer
+        text = " ".join([self.snowball_stmmer.stem(word) for word in text.split()])
+        
+        # Isris stemmer
+        # text = self.isris_stemmer.stem(text)
+        # text = self.isris_stemmer.pre32(text)
+        # text = self.isris_stemmer.suf32(text)
+        
         return text
+
+      
         
 class EnglishPreprocessor:
     def __init__(self):

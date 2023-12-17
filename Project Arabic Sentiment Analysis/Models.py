@@ -1,15 +1,11 @@
-import tensorflow as tf
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout
+from keras.layers import LSTM, Dense, Dropout, Bidirectional, SimpleRNN, GRU, Embedding
 from keras.callbacks import EarlyStopping
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
 from keras.callbacks import ModelCheckpoint
 import numpy as np
-from keras.models import load_model
+import pandas as pd
 from keras.optimizers import Adam
-from keras.layers import Bidirectional
-from keras.layers import SimpleRNN
-from keras.layers import GRU
+
 
 
 # Models architecture 
@@ -70,10 +66,32 @@ def build_gru(input_shape, output_units=3, learning_rate=0.0001):
     return model
 
 
+def build_embedding_lstm(vocab_size, embedding_dim, input_length, output_units=3, learning_rate=0.0001):
+    # Model architecture
+    model = Sequential()
+
+    # Embedding layer
+    model.add(Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=input_length))
+
+    # LSTM layers
+    model.add(LSTM(units=32, return_sequences=True, activation='tanh'))
+    model.add(Dropout(0.2))
+    model.add(LSTM(units=32, return_sequences=False, activation='tanh'))
+    model.add(Dropout(0.2))
+
+    # Output layer
+    model.add(Dense(units=output_units, activation='softmax'))
+    
+    # Compile the model with a specified learning rate
+    adam_optimizer = Adam(learning_rate=learning_rate)
+    model.compile(optimizer=adam_optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    
+    return model
+
 # Train and evaluate model
-def train_evaluate_model(model, x_train, y_train, x_val, y_val, x_test, y_test, model_path='Saved Models/model.h5', epochs = 20, batch_size = 32):
+def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Saved Models/model.h5', epochs = 20, batch_size = 32):
     # Define early stopping callback
-    early_stopping = EarlyStopping(monitor='val_loss', patience=3)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5)
     
     # Define the checkpoint callback to save the model with the highest validation accuracy 
     checkpoint = ModelCheckpoint(
@@ -93,17 +111,8 @@ def train_evaluate_model(model, x_train, y_train, x_val, y_val, x_test, y_test, 
                         validation_data=(x_val, y_val),
                         callbacks=[early_stopping, checkpoint])
     
-   
-    
-    # Evaluate the best model on test data
-    
-    best_model = load_model(model_path)
-    test_loss, val_accuracy = best_model.evaluate(x_test, y_test, verbose=0)
-    
-    print("best model")
-    print(f"Test Loss: {test_loss}")
-    print(f"Test Accuracy: {val_accuracy}")
-    
+    print("Best model saved")
+
     
   
 
