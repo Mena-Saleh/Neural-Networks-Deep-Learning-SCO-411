@@ -90,20 +90,20 @@ def build_embedding_lstm(vocab_size, embedding_dim, input_length, output_units=3
     return model
 
 
-def build_transformer(vocab_size, embed_dim, num_heads, ff_dim, num_layers, input_length, output_units = 3, learning_rate=0.0001):
+def build_transformer(vocab_size, embedding_dim, num_heads, num_transformer_layers, input_length, output_units = 3, learning_rate=0.0001):
     inputs = Input(shape=(input_length,))
 
-    x = Embedding(vocab_size, embed_dim)(inputs)
+    x = Embedding(vocab_size, embedding_dim)(inputs)
 
-    for _ in range(num_layers):
+    for _ in range(num_transformer_layers):
         # Attention mechanism
-        attention_output = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)(x, x, x) # Passing same x for Q, K and V (self-attention mechanisms)
+        attention_output = MultiHeadAttention(num_heads=num_heads, key_dim=embedding_dim)(x, x, x) # Passing same x for Q, K and V (self-attention mechanisms)
         x = LayerNormalization(epsilon=1e-6)(x + attention_output)
         x = Dropout(0.1)(x)
 
         # Feed-forward network
-        ffn_output = Dense(ff_dim, activation="relu")(x)
-        ffn_output = Dense(embed_dim)(ffn_output)
+        ffn_output = Dense(32, activation="relu")(x)
+        ffn_output = Dense(embedding_dim)(ffn_output)
         x = LayerNormalization(epsilon=1e-6)(x + ffn_output)
         x = Dropout(0.1)(x)
 

@@ -94,6 +94,6 @@ y_val = val_df['rating']
 
 
 #6 Transformer
-transformer_model = md.build_transformer(vocab_size=vocab_size, embed_dim=20, num_heads=3, ff_dim=32, num_layers=1, input_length= X_train_embedding.shape[1])
+transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=20, num_heads=3, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
 md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=8, use_early_stopping= True, epochs= 10)
 
