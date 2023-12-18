@@ -13,7 +13,7 @@ import Models as md
 # # Split into training and (validation + test)
 # train_df, val_df = train_test_split(df, test_size = 1000, random_state=42)
 
-# # Preprocess each df
+# # Preprocess each df (and save to a file)
 # train_df = pp.preprocess_df(train_df, "train")
 # val_df = pp.preprocess_df(val_df, "val")
 
@@ -87,7 +87,13 @@ y_val = val_df['rating']
 # print("\n")
 
 
-#5 Embedding LSTM
+# #5 Embedding LSTM
 
-embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 20, input_length= X_train_embedding.shape[1])
-md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5')
+# embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 20, input_length= X_train_embedding.shape[1])
+# md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=32)
+
+
+#6 Transformer
+transformer_model = md.build_transformer(vocab_size=vocab_size, embed_dim=20, num_heads=3, ff_dim=32, num_layers=1, input_length= X_train_embedding.shape[1])
+md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=8, use_early_stopping= True, epochs= 10)
+

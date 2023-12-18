@@ -1,5 +1,6 @@
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout, Bidirectional, SimpleRNN, GRU, Embedding
+from keras.layers import LSTM, Dense, Dropout, Bidirectional, SimpleRNN, GRU, Embedding, MultiHeadAttention, LayerNormalization, GlobalAveragePooling1D, Input
+from keras.models import Model
 from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 import numpy as np
@@ -88,10 +89,40 @@ def build_embedding_lstm(vocab_size, embedding_dim, input_length, output_units=3
     
     return model
 
+
+def build_transformer(vocab_size, embed_dim, num_heads, ff_dim, num_layers, input_length, output_units = 3, learning_rate=0.0001):
+    inputs = Input(shape=(input_length,))
+
+    x = Embedding(vocab_size, embed_dim)(inputs)
+
+    for _ in range(num_layers):
+        # Attention mechanism
+        attention_output = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)(x, x, x) # Passing same x for Q, K and V (self-attention mechanisms)
+        x = LayerNormalization(epsilon=1e-6)(x + attention_output)
+        x = Dropout(0.1)(x)
+
+        # Feed-forward network
+        ffn_output = Dense(ff_dim, activation="relu")(x)
+        ffn_output = Dense(embed_dim)(ffn_output)
+        x = LayerNormalization(epsilon=1e-6)(x + ffn_output)
+        x = Dropout(0.1)(x)
+
+    x = GlobalAveragePooling1D()(x)
+    x = Dense(32, activation="relu")(x)
+    x = Dropout(0.1)(x)
+    outputs = Dense(output_units, activation="softmax")(x)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(optimizer=Adam(learning_rate=learning_rate), 
+                  loss='sparse_categorical_crossentropy', 
+                  metrics=['accuracy'])
+
+    return model
+
 # Train and evaluate model
-def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Saved Models/model.h5', epochs = 20, batch_size = 32):
+def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Saved Models/model.h5', epochs = 20, batch_size = 32, use_early_stopping = True):
     # Define early stopping callback
-    early_stopping = EarlyStopping(monitor='val_loss', patience=5)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=3)
     
     # Define the checkpoint callback to save the model with the highest validation accuracy 
     checkpoint = ModelCheckpoint(
@@ -105,11 +136,18 @@ def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Save
     
     
     # Train the model
-    history = model.fit(x_train, y_train, 
+    if use_early_stopping:
+        history = model.fit(x_train, y_train, 
                         epochs=epochs, 
                         batch_size=batch_size,
                         validation_data=(x_val, y_val),
                         callbacks=[early_stopping, checkpoint])
+    else:
+        history = model.fit(x_train, y_train, 
+                        epochs=epochs, 
+                        batch_size=batch_size,
+                        validation_data=(x_val, y_val),
+                        callbacks=[checkpoint])
     
     print("Best model saved")
 

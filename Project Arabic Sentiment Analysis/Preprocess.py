@@ -62,10 +62,10 @@ class ArabicPreprocessor:
         # Stem the words in the text (Try different stemmers)
         
         # Stemmer library
-        #text = " ".join([self.st.stemWord(word) for word in text.split()])
+        text = " ".join([self.st.stemWord(word) for word in text.split()])
         
         # Snowball stemmer
-        text = " ".join([self.snowball_stmmer.stem(word) for word in text.split()])
+        #text = " ".join([self.snowball_stmmer.stem(word) for word in text.split()])
         
         # Isris stemmer
         # text = self.isris_stemmer.stem(text)
