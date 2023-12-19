@@ -47,7 +47,7 @@ val_df = pd.read_excel("preprocessed_val.xlsx").fillna("")
 
 #2 Embedding using embedding layers
 
-X_train_embedding, tokenizer, vocab_size = fe.prepare_for_embedding(train_df['review_description'].tolist(), max_length=100)
+X_train_embedding, tokenizer, vocab_size = fe.prepare_for_embedding(train_df['review_description'].tolist(), max_length=120)
 X_val_embedding, _, _= fe.prepare_for_embedding(val_df['review_description'].tolist(),max_length= X_train_embedding.shape[1], is_test= True)
 
 # Print all shapes
@@ -89,11 +89,11 @@ y_val = val_df['rating']
 
 # #5 Embedding LSTM
 
-# embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 20, input_length= X_train_embedding.shape[1])
-# md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=32)
+embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 25, input_length= X_train_embedding.shape[1])
+md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=32)
 
 
-#6 Transformer
-transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=20, num_heads=3, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
-md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=8, use_early_stopping= True, epochs= 10)
+# #6 Transformer
+# transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=25, num_heads=5, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
+# md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=32, use_early_stopping= True, epochs= 10)
 

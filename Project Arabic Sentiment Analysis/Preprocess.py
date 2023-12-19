@@ -28,24 +28,25 @@ class ArabicPreprocessor:
     def preprocess(self, text):
         # Replace one or more whitespace characters with a single space
         text = re.sub(r'\s+', ' ', text)
-
         # Normalize certain Arabic characters to their most common forms and remove unnecessary artificats like tashkeel and tatweel
         text = text.strip()
+        
+        # Remove longation
+        text = re.sub(r'(.)\1+', r"\1\1", text) 
+        
         text = re.sub("ى", "ي", text)
         text = re.sub("ؤ", "ء", text)
         text = re.sub("ئ", "ء", text)
         text = re.sub("ة", "ه", text)
 
-        #remove repetetions
+        # Remove repetetions
         text = re.sub("[إأٱآا]", "ا", text)
         text = text.replace('وو', 'و')
         text = text.replace('يي', 'ي')
         text = text.replace('ييي', 'ي')
         text = text.replace('اا', 'ا')
-
-        # Remove longation
-        text = re.sub(r'(.)\1+', r"\1\1", text) 
         
+    
         # Remove tashkeel and tatweel
         text = ar.strip_tashkeel(text)
         text = ar.strip_tatweel(text)
@@ -56,8 +57,61 @@ class ArabicPreprocessor:
         # Reduce characters that appear more than twice in a row to a single character
         text = re.sub(r'(.)\1+', r'\1', text)
 
-        # Remove stop words
-        text = ' '.join([word for word in text.split() if word.lower() not in self.stop_words])
+        
+        # Replacing with synonyms and replace expressions with meaningful words
+        
+        # Words or expressions associated with good review
+        text = text.replace('ما شاء الله', 'ممتاز')
+        text = text.replace('ما شاء اله', 'ممتاز')
+        text = text.replace('احلا', 'ممتاز')
+        text = text.replace('احلي', 'ممتاز')
+        text = text.replace('اخلي', 'ممتاز')
+        text = text.replace('احله', 'ممتاز')
+        text = text.replace('طيب', 'ممتاز')
+        text = text.replace('حلو', 'ممتاز')
+        text = text.replace('يجن', 'ممتاز')
+        text = text.replace('يجنن', 'ممتاز')
+        text = text.replace('افضل', 'ممتاز')
+        text = text.replace('wow', 'ممتاز')
+        text = text.replace('سريع', 'ممتاز')        
+        text = text.replace('كويسة', 'ممتاز')
+        text = text.replace('كويس', 'ممتاز')
+        text = text.replace('توفيق', 'ممتاز')
+        text = text.replace('جميل', 'ممتاز')
+        text = text.replace('جميلة', 'ممتاز')
+        text = text.replace('سهل', 'ممتاز')
+        text = text.replace('شكر', 'ممتاز')
+        text = text.replace('شكرا', 'ممتاز')
+        text = text.replace('جيد', 'ممتاز')
+
+
+
+        # Words associated usually with bad review (also some of them are removed as stop words but they are useful)
+        text = text.replace('bad', 'زفت')
+        text = text.replace('فاشل', 'زفت')
+        text = text.replace('خيس', 'زفت')
+        text = text.replace('عسير', 'زفت')
+        text = text.replace('مشكله', 'زفت')
+        text = text.replace('عسير', 'زفت')
+        text = text.replace('نصب', 'زفت')
+        text = text.replace('احتيال', 'زفت')
+        text = text.replace('صعب', 'زفت')
+        text = text.replace('يلع', 'زفت')
+        text = text.replace('يلعن', 'زفت')
+        text = text.replace('يتأخر', 'زفت')
+        text = text.replace('بايخ', 'زفت')
+        text = text.replace('اسوء', 'زفت')
+        text = text.replace('مفيش', 'زفت')
+        text = text.replace('تفو', 'زفت')
+
+
+        
+        # # Remove stop words (لا و غير بيغيرو معني الجملة)
+        # words_to_remove = {'لا', 'غير', 'ما', 'لم'}
+
+        # # Remove the specified words from the set of Arabic stopwords
+        # arabic_stopwords = self.stop_words - words_to_remove
+        # text = ' '.join([word for word in text.split() if word.lower() not in arabic_stopwords])
         
         # Stem the words in the text (Try different stemmers)
         
