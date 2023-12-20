@@ -22,7 +22,7 @@ preprocessed_df = pp.preprocess_df(df, "train", isPredict=True)
 embedding, _, _ = fe.prepare_for_embedding(preprocessed_df['review_description'], is_test=True, max_length=120)
 
 # Load model and predict
-best_model = load_model('Saved Models/Embedding LSTM.h5')
+best_model = load_model('Saved Models/Embedding LSTM [BEST].h5')
 
 # Gets probabilities of all classes using softmax function
 predictions = best_model.predict(embedding)
@@ -32,7 +32,7 @@ predicted_classes = np.argmax(predictions, axis=1)
 predicted_classes = predicted_classes - 1
 
 
-# # Save as CSV in the correct format (ID, rating)
+# Save as CSV in the correct format (ID, rating)
 
 new_df = pd.DataFrame(df.iloc[:, 0])
 new_df['rating'] = predicted_classes

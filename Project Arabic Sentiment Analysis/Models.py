@@ -110,6 +110,7 @@ def build_transformer(vocab_size, embedding_dim, num_heads, num_transformer_laye
     x = GlobalAveragePooling1D()(x)
     x = Dense(32, activation="relu")(x)
     x = Dropout(0.1)(x)
+
     outputs = Dense(output_units, activation="softmax")(x)
 
     model = Model(inputs=inputs, outputs=outputs)

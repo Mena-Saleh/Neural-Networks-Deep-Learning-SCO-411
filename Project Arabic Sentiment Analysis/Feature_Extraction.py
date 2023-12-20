@@ -29,7 +29,6 @@ def CountVectorize(x, is_test=False):
     return x
 
 
-
 # Tokenizes text, encodes it and then pads it all to a similar length to prepare for the embedding layer.
 def prepare_for_embedding(texts, max_length=None, is_test=False):
     if is_test:

@@ -7,7 +7,7 @@ import Models as md
 
 # [ONLY NEED TO RUN ONCE AND THEN IT SAVES PREPROCESSED DATA]
 
-# # Read data
+# Read data
 # df = pd.read_excel("train.xlsx")
 
 # # Split into training and (validation + test)
@@ -47,7 +47,7 @@ val_df = pd.read_excel("preprocessed_val.xlsx").fillna("")
 
 #2 Embedding using embedding layers
 
-X_train_embedding, tokenizer, vocab_size = fe.prepare_for_embedding(train_df['review_description'].tolist(), max_length=120)
+X_train_embedding, tokenizer, vocab_size = fe.prepare_for_embedding(train_df['review_description'].tolist(), max_length= 120)
 X_val_embedding, _, _= fe.prepare_for_embedding(val_df['review_description'].tolist(),max_length= X_train_embedding.shape[1], is_test= True)
 
 # Print all shapes
@@ -62,7 +62,7 @@ y_val = val_df['rating']
 
 # Train and evaluate models
 
-# #1 LSTM
+#1 LSTM
 # print("#1 LSTM model \n")
 # lstm_model = md.build_lstm(input_shape=(1, model_shape[1]))
 # md.train_evaluate_model(lstm_model, X_train_tf_idf, y_train, X_val_tf_idf, y_val, 'Saved Models/LSTM.h5')
@@ -71,29 +71,29 @@ y_val = val_df['rating']
 # #2 Bidirectional LSTM
 # print("#2 Bidirectional LSTM model \n")
 # bidirectional_lstm_model = md.build_lstm_bidirectional(input_shape=(1, model_shape[1]))
-# md.train_evaluate_model(bidirectional_lstm_model, tf_idf_train, y_train, tf_idf_val, y_val, 'Saved Models/Bidirectional LSTM.h5')
+# md.train_evaluate_model(bidirectional_lstm_model, X_train_tf_idf, y_train, X_val_tf_idf, y_val, 'Saved Models/Bidirectional LSTM.h5')
 # print("\n")
 
 # #3 Simple RNN
 # print("#3 Simple RNN model \n")
 # simple_rnn_model = md.build_simple_rnn(input_shape=(1, model_shape[1]))
-# md.train_evaluate_model(simple_rnn_model, tf_idf_train, y_train, tf_idf_val, y_val, 'Saved Models/Simple RNN.h5')
+# md.train_evaluate_model(simple_rnn_model, X_train_tf_idf, y_train, X_val_tf_idf, y_val, 'Saved Models/Simple RNN.h5')
 # print("\n")
 
 # #4 GRU
 # print("#4 GRU model \n")
 # gru_model = md.build_gru(input_shape=(1, model_shape[1]))
-# md.train_evaluate_model(gru_model, tf_idf_train, y_train, tf_idf_val, y_val, 'Saved Models/GRU.h5')
+# md.train_evaluate_model(gru_model, X_train_tf_idf, y_train, X_val_tf_idf, y_val, 'Saved Models/GRU.h5')
 # print("\n")
 
 
 # #5 Embedding LSTM
+# print("#5 Embedding LSTM \n")
+# embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 25, input_length= X_train_embedding.shape[1], learning_rate= 0.0001)
+# md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=256, use_early_stopping= True)
 
-embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 25, input_length= X_train_embedding.shape[1])
-md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=32)
-
-
-# #6 Transformer
-# transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=25, num_heads=5, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
-# md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=32, use_early_stopping= True, epochs= 10)
+#6 Transformer
+print("#6 Transformer \n")
+transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=10, num_heads=5, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
+md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=256, use_early_stopping= True, epochs= 20)
 
