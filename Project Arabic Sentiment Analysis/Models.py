@@ -6,7 +6,7 @@ from keras.callbacks import ModelCheckpoint
 import numpy as np
 import pandas as pd
 from keras.optimizers import Adam
-
+from keras_nlp.layers import SinePositionEncoding
 
 
 # Models architecture 
@@ -93,25 +93,30 @@ def build_embedding_lstm(vocab_size, embedding_dim, input_length, output_units=3
 def build_transformer(vocab_size, embedding_dim, num_heads, num_transformer_layers, input_length, output_units = 3, learning_rate=0.0001):
     inputs = Input(shape=(input_length,))
 
+    # Embedding the words
     x = Embedding(vocab_size, embedding_dim)(inputs)
-
+    
+    # Adding positional encoding
+    positional_encoding = SinePositionEncoding()(x)
+    x = x + positional_encoding
+    
     for _ in range(num_transformer_layers):
         # Attention mechanism
         attention_output = MultiHeadAttention(num_heads=num_heads, key_dim=embedding_dim)(x, x, x) # Passing same x for Q, K and V (self-attention mechanisms)
-        x = LayerNormalization(epsilon=1e-6)(x + attention_output)
+        x = LayerNormalization(epsilon=1e-6)(x + attention_output) # Normalization makes the mean 0 and standard deviation 1, it also adds a very small number epsilon to prevent divison by 0.
         x = Dropout(0.1)(x)
 
         # Feed-forward network
         ffn_output = Dense(32, activation="relu")(x)
-        ffn_output = Dense(embedding_dim)(ffn_output)
+        ffn_output = Dense(embedding_dim)(ffn_output) # Number of neurons is same as embedding_dim to match subsequent layers, activation function is also linear. (sum of products)
         x = LayerNormalization(epsilon=1e-6)(x + ffn_output)
         x = Dropout(0.1)(x)
 
-    x = GlobalAveragePooling1D()(x)
-    x = Dense(32, activation="relu")(x)
+    x = GlobalAveragePooling1D()(x) # To reduce dimensionality and prepare for prediction.
+    x = Dense(32, activation="relu")(x) # Further processing the data.
     x = Dropout(0.1)(x)
 
-    outputs = Dense(output_units, activation="softmax")(x)
+    outputs = Dense(output_units, activation="softmax")(x) # Final output probabilities.
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(optimizer=Adam(learning_rate=learning_rate), 
@@ -119,6 +124,7 @@ def build_transformer(vocab_size, embedding_dim, num_heads, num_transformer_laye
                   metrics=['accuracy'])
 
     return model
+
 
 # Train and evaluate model
 def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Saved Models/model.h5', epochs = 20, batch_size = 32, use_early_stopping = True):

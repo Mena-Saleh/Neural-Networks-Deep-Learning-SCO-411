@@ -3,6 +3,7 @@ import pandas as pd
 import Preprocess as pp
 import Feature_Extraction as fe
 import numpy as np
+from keras_nlp.layers import SinePositionEncoding
 
 # Read and preprocess test data
 df = pd.read_csv("test_no_label.csv")
@@ -22,7 +23,8 @@ preprocessed_df = pp.preprocess_df(df, "train", isPredict=True)
 embedding, _, _ = fe.prepare_for_embedding(preprocessed_df['review_description'], is_test=True, max_length=120)
 
 # Load model and predict
-best_model = load_model('Saved Models/Embedding LSTM [BEST].h5')
+# best_model = load_model('Saved Models/Embedding LSTM [BEST].h5')
+best_model = load_model('Saved Models/Transformer around 85.h5', custom_objects={'SinePositionEncoding': SinePositionEncoding})
 
 # Gets probabilities of all classes using softmax function
 predictions = best_model.predict(embedding)

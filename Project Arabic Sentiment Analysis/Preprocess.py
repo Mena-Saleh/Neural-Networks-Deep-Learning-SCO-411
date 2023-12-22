@@ -38,9 +38,9 @@ class ArabicPreprocessor:
         text = re.sub("ؤ", "ء", text)
         text = re.sub("ئ", "ء", text)
         text = re.sub("ة", "ه", text)
+        text = re.sub("[إأٱآا]", "ا", text)
 
         # Remove repetetions
-        text = re.sub("[إأٱآا]", "ا", text)
         text = text.replace('وو', 'و')
         text = text.replace('يي', 'ي')
         text = text.replace('ييي', 'ي')
@@ -81,6 +81,7 @@ class ArabicPreprocessor:
         text = text.replace('شكرا', 'ممتاز')
         text = text.replace('جيد', 'ممتاز')
         text = text.replace('روعه', 'ممتاز')
+        
         text = text.replace('نظيف', 'ممتاز')
         text = text.replace('اقوى', 'ممتاز')
         text = text.replace('قوى', 'ممتاز')
@@ -107,6 +108,7 @@ class ArabicPreprocessor:
         text = text.replace('اسوء', 'زفت')
         text = text.replace('مفيش', 'زفت')
         text = text.replace('تفو', 'زفت')
+        
         text = text.replace('ضغيف', 'زفت')
         text = text.replace('لا يعمل', 'زفت')
         text = text.replace('ذق', 'زفت')

@@ -7,7 +7,7 @@ import Models as md
 
 # [ONLY NEED TO RUN ONCE AND THEN IT SAVES PREPROCESSED DATA]
 
-# Read data
+# # Read data
 # df = pd.read_excel("train.xlsx")
 
 # # Split into training and (validation + test)
@@ -87,7 +87,7 @@ y_val = val_df['rating']
 # print("\n")
 
 
-# #5 Embedding LSTM
+#5 Embedding LSTM
 # print("#5 Embedding LSTM \n")
 # embedding_lstm_model = md.build_embedding_lstm(vocab_size=vocab_size, embedding_dim= 25, input_length= X_train_embedding.shape[1], learning_rate= 0.0001)
 # md.train_evaluate_model(embedding_lstm_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Embedding LSTM.h5', batch_size=256, use_early_stopping= True)
@@ -95,5 +95,5 @@ y_val = val_df['rating']
 #6 Transformer
 print("#6 Transformer \n")
 transformer_model = md.build_transformer(vocab_size=vocab_size, embedding_dim=10, num_heads=5, num_transformer_layers=1, input_length= X_train_embedding.shape[1])
-md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=256, use_early_stopping= True, epochs= 20)
+md.train_evaluate_model(transformer_model, X_train_embedding, y_train, X_val_embedding, y_val, 'Saved Models/Transformer.h5', batch_size=32, use_early_stopping= True, epochs= 20)
 
