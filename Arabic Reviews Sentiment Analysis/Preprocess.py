@@ -272,7 +272,7 @@ def preprocess_df(df, out_name, num_samples=-1, isPredict = False):
         df['rating'] = df['rating'].map(label_mapping)
     
         # Save to Excel
-        df.to_excel(f'preprocessed_{out_name}.xlsx', index=False)
+        df.to_excel(f'Output/preprocessed_{out_name}.xlsx', index=False)
     
     return df
 

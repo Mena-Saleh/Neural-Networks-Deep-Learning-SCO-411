@@ -140,23 +140,23 @@ def train_evaluate_model(model, x_train, y_train, x_val, y_val, model_path='Save
         mode='min',                 
         save_freq='epoch')
 
+
+    # Preparing callbacks
     
-    
-    # Train the model
+    callbacks = [checkpoint]
     if use_early_stopping:
-        history = model.fit(x_train, y_train, 
-                        epochs=epochs, 
-                        batch_size=batch_size,
-                        validation_data=(x_val, y_val),
-                        callbacks=[early_stopping, checkpoint])
-    else:
-        history = model.fit(x_train, y_train, 
-                        epochs=epochs, 
-                        batch_size=batch_size,
-                        validation_data=(x_val, y_val),
-                        callbacks=[checkpoint])
+       callbacks.append(early_stopping
+                        )
+    # Train the model
     
+    history = model.fit(x_train, y_train, 
+                        epochs=epochs, 
+                        batch_size=batch_size,
+                        validation_data=(x_val, y_val),
+                        callbacks=callbacks)
+     
     print("Best model saved")
+    return history
 
     
   

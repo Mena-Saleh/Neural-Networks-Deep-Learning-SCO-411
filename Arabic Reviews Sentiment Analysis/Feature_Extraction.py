@@ -9,23 +9,23 @@ from joblib import dump, load
 
 def TF_IDF_vectorize(x, is_test = False):
     if (is_test):
-        vectorizer = load('TF_IDF_vectorizer.joblib')
+        vectorizer = load('Output/TF_IDF_vectorizer.joblib')
         x = vectorizer.transform(x)
     else:
         vectorizer = TfidfVectorizer()
         x = vectorizer.fit_transform(x)
-        dump(vectorizer,  'TF_IDF_vectorizer.joblib')
+        dump(vectorizer,  'Output/TF_IDF_vectorizer.joblib')
     return x
 
 
 def CountVectorize(x, is_test=False):
     if is_test:
-        vectorizer = load('Count_vectorizer.joblib')
+        vectorizer = load('Output/Count_vectorizer.joblib')
         x = vectorizer.transform(x)
     else:
         vectorizer = CountVectorizer()
         x = vectorizer.fit_transform(x)
-        dump(vectorizer, 'Count_vectorizer.joblib')
+        dump(vectorizer, 'Output/Count_vectorizer.joblib')
     return x
 
 
@@ -33,13 +33,13 @@ def CountVectorize(x, is_test=False):
 def prepare_for_embedding(texts, max_length=None, is_test=False):
     if is_test:
         # Load the tokenizer used during training
-        tokenizer = load("Tokenizer.joblib")
+        tokenizer = load("Output/Tokenizer.joblib")
     else:
         # Tokenization
         tokenizer = Tokenizer()
         tokenizer.fit_on_texts(texts)
         # Save the tokenizer for later use during testing
-        dump(tokenizer, "Tokenizer.joblib")
+        dump(tokenizer, "Output/Tokenizer.joblib")
 
     # Integer Encoding
     sequences = tokenizer.texts_to_sequences(texts)

@@ -24,7 +24,7 @@ embedding, _, _ = fe.prepare_for_embedding(preprocessed_df['review_description']
 
 # Load model and predict
 # best_model = load_model('Saved Models/Embedding LSTM [BEST].h5')
-best_model = load_model('Saved Models/Transformer around 85.h5', custom_objects={'SinePositionEncoding': SinePositionEncoding})
+best_model = load_model('Saved Models/Transformer.h5', custom_objects={'SinePositionEncoding': SinePositionEncoding})
 
 # Gets probabilities of all classes using softmax function
 predictions = best_model.predict(embedding)
@@ -39,6 +39,6 @@ predicted_classes = predicted_classes - 1
 new_df = pd.DataFrame(df.iloc[:, 0])
 new_df['rating'] = predicted_classes
 
-new_df.to_csv('95.csv', index= False)
+new_df.to_csv('Output/95.csv', index= False)
 print("Saved to csv file successfully.")
 
