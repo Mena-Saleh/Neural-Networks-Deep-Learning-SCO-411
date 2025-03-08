@@ -9,7 +9,7 @@ This repository contains all the code written over the semester in the subject o
 - Implementation for Perceptron and Adaline from scratch for a binary classification task.
 - More Details: [Report](<Dry Beans Classification using Perceptron and Adaline/Report.docx>)
 
-### Task 2: [Dry Beans Classification using Perceptron and Adaline using Multi-Layer Perceptron](<Dry Beans Classification using Multi-Layer Perceptron>)
+### Task 2: [Dry Beans Classification using Multi-Layer Perceptron](<Dry Beans Classification using Multi-Layer Perceptron>)
 
 - Implementation for MLP from scratch for a multi-class classification task.
 - More Details: [Report](<Dry Beans Classification using Perceptron and Adaline/Report.docx>)
